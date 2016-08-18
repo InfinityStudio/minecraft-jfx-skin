@@ -5,8 +5,6 @@ import static moe.mickey.minecraft.skin.fx.FunctionHelper.*;
 import java.io.File;
 import java.io.FileInputStream;
 
-import javafx.animation.AnimationTimer;
-import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
@@ -24,6 +22,7 @@ import javafx.scene.shape.Shape3D;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
+import javafx.util.Duration;
 
 public class SkinCanvas extends Group {
 	
@@ -37,7 +36,7 @@ public class SkinCanvas extends Group {
 	public static final SkinCube STEVEN_LARM = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 32F / 64F, 48F / 64F, false);
 	public static final SkinCube STEVEN_RARM = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 40F / 64F, 16F / 64F, false);
 	
-	protected Image skin;
+	protected Image srcSkin, skin;
 	protected boolean isSlim;
 	
 	protected double preW, preH, sensitivity;
@@ -46,22 +45,56 @@ public class SkinCanvas extends Group {
 	protected SubScene subScene;
 	protected Group root = new Group();
 	
-	protected SkinMultipleCubes headOuter = new SkinMultipleCubes(8, 8,  8, 32F / 64F, 0F, 1.125, 0.2);
-	protected SkinMultipleCubes bodyOuter = new SkinMultipleCubes(8, 12, 4, 16F / 64F, 32F / 64F, 1, 0.2);
-	protected SkinMultipleCubes larmOuter = new SkinMultipleCubes(4, 12, 4, 48F / 64F, 48F / 64F, 1.0625, 0.2);
-	protected SkinMultipleCubes rarmOuter = new SkinMultipleCubes(4, 12, 4, 40F / 64F, 32F / 64F, 1.0625, 0.2);
-	protected SkinMultipleCubes llegOuter = new SkinMultipleCubes(4, 12, 4, 0F / 64F, 48F / 64F, 1.0625, 0.2);
-	protected SkinMultipleCubes rlegOuter = new SkinMultipleCubes(4, 12, 4, 0F / 64F, 32F / 64F, 1.0625, 0.2);
+	public final SkinMultipleCubes headOuter = new SkinMultipleCubes(8, 8,  8, 32F / 64F, 0F, 1.125, 0.2);
+	public final SkinMultipleCubes bodyOuter = new SkinMultipleCubes(8, 12, 4, 16F / 64F, 32F / 64F, 1, 0.2);
+	public final SkinMultipleCubes larmOuter = new SkinMultipleCubes(4, 12, 4, 48F / 64F, 48F / 64F, 1.0625, 0.2);
+	public final SkinMultipleCubes rarmOuter = new SkinMultipleCubes(4, 12, 4, 40F / 64F, 32F / 64F, 1.0625, 0.2);
+	public final SkinMultipleCubes llegOuter = new SkinMultipleCubes(4, 12, 4, 0F / 64F, 48F / 64F, 1.0625, 0.2);
+	public final SkinMultipleCubes rlegOuter = new SkinMultipleCubes(4, 12, 4, 0F / 64F, 32F / 64F, 1.0625, 0.2);
 	
-	protected SkinCube head = new SkinCube(8, 8,  8, 32F / 64F, 16F / 64F, 0F, 0F, false);
-	protected SkinCube body = new SkinCube(8, 12, 4, 24F / 64F, 16F / 64F, 16F / 64F, 16F / 64F, false);
-	protected SkinCube larm = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 32F / 64F, 48F / 64F, false);
-	protected SkinCube rarm = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 40F / 64F, 16F / 64F, false);
-	protected SkinCube lleg = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 16F / 64F, 48F / 64F, false);
-	protected SkinCube rleg = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 0F, 16F / 64F, false);
+	public final SkinCube headInside = new SkinCube(8, 8,  8, 32F / 64F, 16F / 64F, 0F, 0F, false);
+	public final SkinCube bodyInside = new SkinCube(8, 12, 4, 24F / 64F, 16F / 64F, 16F / 64F, 16F / 64F, false);
+	public final SkinCube larmInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 32F / 64F, 48F / 64F, false);
+	public final SkinCube rarmInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 40F / 64F, 16F / 64F, false);
+	public final SkinCube llegInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 16F / 64F, 48F / 64F, false);
+	public final SkinCube rlegInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 0F, 16F / 64F, false);
 	
-	protected Rotate larmRotate = new Rotate(0, -larm.getWidth() / 2, -larm.getHeight() / 2, 0, Rotate.Z_AXIS);
-	protected Rotate rarmRotate = new Rotate(0, +rarm.getWidth() / 2, -rarm.getHeight() / 2, 0, Rotate.Z_AXIS);
+	public final SkinGroup head = new SkinGroup(
+			new Rotate(0, 0, headInside.getHeight() / 2, 0, Rotate.X_AXIS), 
+			new Rotate(0, Rotate.Y_AXIS),
+			new Rotate(0, 0, headInside.getHeight() / 2, 0, Rotate.Z_AXIS),
+			headOuter, headInside
+	);
+	public final SkinGroup body = new SkinGroup(
+			new Rotate(0, Rotate.X_AXIS), 
+			new Rotate(0, Rotate.Y_AXIS),
+			new Rotate(0, Rotate.Z_AXIS),
+			bodyOuter, bodyInside
+	);
+	public final SkinGroup larm = new SkinGroup(
+			new Rotate(0, 0, -larmInside.getHeight() / 2, 0, Rotate.X_AXIS), 
+			new Rotate(0, Rotate.Y_AXIS),
+			new Rotate(0, +larmInside.getWidth() / 2, -larmInside.getHeight() / 2, 0, Rotate.Z_AXIS),
+			larmOuter, larmInside
+	);
+	public final SkinGroup rarm = new SkinGroup(
+			new Rotate(0, 0, -rarmInside.getHeight() / 2, 0, Rotate.X_AXIS), 
+			new Rotate(0, Rotate.Y_AXIS),
+			new Rotate(0, -rarmInside.getWidth() / 2, -rarmInside.getHeight() / 2, 0, Rotate.Z_AXIS),
+			rarmOuter, rarmInside
+	);
+	public final SkinGroup lleg = new SkinGroup(
+			new Rotate(0, 0, -llegInside.getHeight() / 2, 0, Rotate.X_AXIS), 
+			new Rotate(0, Rotate.Y_AXIS),
+			new Rotate(0, 0, -llegInside.getHeight() / 2, 0, Rotate.Z_AXIS),
+			llegOuter, llegInside
+	);
+	public final SkinGroup rleg = new SkinGroup(
+			new Rotate(0, 0, -rlegInside.getHeight() / 2, 0, Rotate.X_AXIS), 
+			new Rotate(0, Rotate.Y_AXIS),
+			new Rotate(0, 0, -rlegInside.getHeight() / 2, 0, Rotate.Z_AXIS),
+			rlegOuter, rlegInside
+	);
 	
 	protected PerspectiveCamera camera = new PerspectiveCamera(true);
 	
@@ -71,30 +104,29 @@ public class SkinCanvas extends Group {
 	protected Translate translate = new Translate(0, 0, -80);
 	protected Scale scale = new Scale(1, 1);
 	
-	protected float armShakingMaxAngle = 7.5F;
-	protected float shakingSpeed = .5F;
-	
-	protected AnimationTimer shaking = new AnimationTimer() {
-		float lastRotate = 0;
-		int flag = 1;
-		long last = 0;
-		@Override
-		public void handle(long now) {
-			float rotate = (now - last) / 1000_000_000F * armShakingMaxAngle * shakingSpeed;
-			rotate %= armShakingMaxAngle;
-			rotate = lastRotate + rotate * flag;
-			if (rotate < 0 || rotate > armShakingMaxAngle) {
-				flag *= -1;
-				rotate -= rotate % armShakingMaxAngle;
-			}
-			lastRotate = rotate;
-			larmRotate.setAngle(+rotate);
-			rarmRotate.setAngle(-rotate);
-			last = now;
-		}
-	};
+	protected SkinAnimationPlayer animationplayer = new SkinAnimationPlayer();
 	
 	private double lastX = -1, lastY = -1;
+	
+	public SkinAnimationPlayer getAnimationplayer() {
+		return animationplayer;
+	}
+	
+	// Test Animation
+	{
+		SkinTransition larmTransition = new SkinTransition(Duration.seconds(2), v -> v * 7.5,
+				larm.getZRotate().angleProperty());
+		larmTransition.setAutoReverse(true);
+		larmTransition.setCycleCount(2);
+		
+		SkinTransition rarmTransition = new SkinTransition(Duration.seconds(2), v -> v * -7.5,
+				rarm.getZRotate().angleProperty());
+		rarmTransition.setAutoReverse(true);
+		rarmTransition.setCycleCount(2);
+		
+		SkinAnimation animation = new SkinAnimation(1000, larmTransition, rarmTransition);
+		getAnimationplayer().addSkinAnimation(animation);
+	}
 	
 	public Image getSkin() {
 		return skin;
@@ -102,33 +134,34 @@ public class SkinCanvas extends Group {
 	
 	public void updateSkin(Image skin, boolean isSlim) {
 		if (SkinHelper.isNoRequest(skin) && SkinHelper.isSkin(skin)) {
+			this.srcSkin = skin;
 			this.skin = SkinHelper.x32Tox64(skin);
 			int multiple = Math.max((int) (1024 / skin.getWidth()), 1);
 			if (multiple > 1)
 				this.skin = SkinHelper.enlarge(this.skin, multiple);
 			if (this.isSlim != isSlim)
 				updateSkinModel(isSlim);
-			bindMaterial();
+			bindMaterial(root);
 		}
 	}
 	
 	protected void updateSkinModel(boolean isSlim) {
 		this.isSlim = isSlim;
 		alwayB(SkinMultipleCubes::setWidth, isSlim ? 3 : 4, larmOuter, rarmOuter);
-		alwayB(SkinCube::setWidth, isSlim ? 3D : 4D, larm, rarm);
+		alwayB(SkinCube::setWidth, isSlim ? 3D : 4D, larmInside, rarmInside);
 		
-		alwayB(Node::setTranslateX, -(body.getWidth() + larm.getWidth()) / 2, larmOuter, larm);
-		alwayB(Node::setTranslateX, +(body.getWidth() + rarm.getWidth()) / 2, rarmOuter, rarm);
+		alwayB(Node::setTranslateX, -(bodyInside.getWidth() + larmInside.getWidth()) / 2, larmOuter, larm);
+		alwayB(Node::setTranslateX, +(bodyInside.getWidth() + rarmInside.getWidth()) / 2, rarmOuter, rarm);
 		if (isSlim) {
-			larm.setModel(ALEX_LARM.getModel());
-			rarm.setModel(ALEX_RARM.getModel());
+			larmInside.setModel(ALEX_LARM.getModel());
+			rarmInside.setModel(ALEX_RARM.getModel());
 		} else {
-			larm.setModel(STEVEN_LARM.getModel());
-			rarm.setModel(STEVEN_RARM.getModel());
+			larmInside.setModel(STEVEN_LARM.getModel());
+			rarmInside.setModel(STEVEN_RARM.getModel());
 		}
 		
-		larmRotate.setPivotX(-larm.getWidth() / 2);
-		rarmRotate.setPivotX(+rarm.getWidth() / 2);
+		larm.getZRotate().setPivotX(-larmInside.getWidth() / 2);
+		rarm.getZRotate().setPivotX(+rarmInside.getWidth() / 2);
 	}
 	
 	public double getSensitivity() {
@@ -159,39 +192,40 @@ public class SkinCanvas extends Group {
 		return material;
 	}
 	
-	protected void bindMaterial() {
+	protected void bindMaterial(Group group) {
 		Material material = createMaterial();
-		for (Node node : root.getChildren())
+		for (Node node : group.getChildren())
 			if (node instanceof Shape3D)
 				((Shape3D) node).setMaterial(material);
 			else if (node instanceof SkinMultipleCubes)
 				((SkinMultipleCubes) node).updateSkin(skin);
+			else if (node instanceof Group)
+				bindMaterial((Group) node);
 	}
 	
+	
+	
 	protected Group createPlayerModel() {
-		alwayB(Node::setTranslateY, -(body.getHeight() + head.getHeight()) / 2, headOuter, head);
+		head.setTranslateY(-(bodyInside.getHeight() + headInside.getHeight()) / 2);
 		
-		alwayB(Node::setTranslateX, -(body.getWidth() + larm.getWidth()) / 2, larmOuter, larm);
-		alwayB(Node::setTranslateX, +(body.getWidth() + rarm.getWidth()) / 2, rarmOuter, rarm);
+		larm.setTranslateX(-(bodyInside.getWidth() + larmInside.getWidth()) / 2);
+		rarm.setTranslateX(+(bodyInside.getWidth() + rarmInside.getWidth()) / 2);
 		
-		alwayB(link2(Node::getTransforms, ObservableList::add), larmRotate, larmOuter, larm);
-		alwayB(link2(Node::getTransforms, ObservableList::add), rarmRotate, rarmOuter, rarm);
+		lleg.setTranslateX(-(bodyInside.getWidth() - llegInside.getWidth()) / 2);
+		rleg.setTranslateX(+(bodyInside.getWidth() - rlegInside.getWidth()) / 2);
 		
-		alwayB(Node::setTranslateX, -(body.getWidth() - lleg.getWidth()) / 2, llegOuter, lleg);
-		alwayB(Node::setTranslateX, +(body.getWidth() - rleg.getWidth()) / 2, rlegOuter, rleg);
-		
-		alwayB(Node::setTranslateY, +(body.getHeight() + lleg.getHeight()) / 2, llegOuter, lleg);
-		alwayB(Node::setTranslateY, +(body.getHeight() + rleg.getHeight()) / 2, rlegOuter, rleg);
+		lleg.setTranslateY(+(bodyInside.getHeight() + llegInside.getHeight()) / 2);
+		rleg.setTranslateY(+(bodyInside.getHeight() + rlegInside.getHeight()) / 2);
 		
 		root.getTransforms().addAll(xRotate);
 		
 		root.getChildren().addAll(
-				headOuter, head,
-				bodyOuter, body,
-				larmOuter, larm, 
-				rarmOuter, rarm,
-				llegOuter, lleg,
-				rlegOuter, rleg
+				head,
+				body,
+				larm,
+				rarm,
+				lleg,
+				rleg
 		);
 		updateSkin(skin, false);
 		
@@ -268,12 +302,6 @@ public class SkinCanvas extends Group {
 					// Ignore
 				}
 		});
-		
-		shaking.start();
-	}
-	
-	public void destroy() {
-		shaking.stop();
 	}
 
 }

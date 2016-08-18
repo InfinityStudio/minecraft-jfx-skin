@@ -6,6 +6,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
+
 public interface FunctionHelper {
 	
 	public static <T> void alway(Consumer<T> consumer, T... ts) {
@@ -22,6 +25,20 @@ public interface FunctionHelper {
 	
 	public static <A, B> BiConsumer<B, A> exchange(BiConsumer<A, B> consumer) {
 		return (b, a) -> consumer.accept(a, b);
+	}
+	
+	public static <T> Consumer<T> link(Consumer<T>... consumers) {
+		return t -> {
+			for (Consumer<T> consumer : consumers)
+				consumer.accept(t);
+		};
+	}
+	
+	public static <T extends Event> EventHandler<T> link(EventHandler<T>... handlers) {
+		return t -> {
+			for (EventHandler<T> handler : handlers)
+				handler.handle(t);
+		};
 	}
 	
 	public static <A, B> Consumer<A> link1(Function<A, B> function, Consumer<B> consumer) {
