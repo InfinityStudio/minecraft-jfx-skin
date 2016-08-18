@@ -46,12 +46,12 @@ public class SkinCanvas extends Group {
 	protected SubScene subScene;
 	protected Group root = new Group();
 	
-	protected SkinMultipleCubes headOuter = new SkinMultipleCubes(8, 8,  8, 32F / 64F, 0F, 1.125, 0.2, false);
-	protected SkinMultipleCubes bodyOuter = new SkinMultipleCubes(8, 12, 4, 16F / 64F, 32F / 64F, 1.125, 0.2, false);
-	protected SkinMultipleCubes larmOuter = new SkinMultipleCubes(4, 12, 4, 48F / 64F, 48F / 64F, 1.125, 0.2, true);
-	protected SkinMultipleCubes rarmOuter = new SkinMultipleCubes(4, 12, 4, 40F / 64F, 32F / 64F, 1.125, 0.2, true);
-	protected SkinMultipleCubes llegOuter = new SkinMultipleCubes(4, 12, 4, 0F, 48F / 64F, 1.125, 0.2, true);
-	protected SkinMultipleCubes rlegOuter = new SkinMultipleCubes(4, 12, 4, 0F, 32F / 64F, 1.125, 0.2, true);
+	protected SkinMultipleCubes headOuter = new SkinMultipleCubes(8, 8,  8, 32F / 64F, 0F, 1.125, 0.2);
+	protected SkinMultipleCubes bodyOuter = new SkinMultipleCubes(8, 12, 4, 16F / 64F, 32F / 64F, 1, 0.2);
+	protected SkinMultipleCubes larmOuter = new SkinMultipleCubes(4, 12, 4, 48F / 64F, 48F / 64F, 1.0625, 0.2);
+	protected SkinMultipleCubes rarmOuter = new SkinMultipleCubes(4, 12, 4, 40F / 64F, 32F / 64F, 1.0625, 0.2);
+	protected SkinMultipleCubes llegOuter = new SkinMultipleCubes(4, 12, 4, 0F / 64F, 48F / 64F, 1.0625, 0.2);
+	protected SkinMultipleCubes rlegOuter = new SkinMultipleCubes(4, 12, 4, 0F / 64F, 32F / 64F, 1.0625, 0.2);
 	
 	protected SkinCube head = new SkinCube(8, 8,  8, 32F / 64F, 16F / 64F, 0F, 0F, false);
 	protected SkinCube body = new SkinCube(8, 12, 4, 24F / 64F, 16F / 64F, 16F / 64F, 16F / 64F, false);
