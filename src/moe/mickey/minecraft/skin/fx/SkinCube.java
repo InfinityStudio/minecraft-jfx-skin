@@ -95,12 +95,12 @@ public class SkinCube extends MeshView {
 	private Image skin;
 	private Mesh model;
 	
-	public SkinCube(float width, float height, float depth, float scaleX, float scaleY, float startX, float startY, boolean isSlim) {
+	public SkinCube(float width, float height, float depth, float scaleX, float scaleY, float startX, float startY, float enlarge, boolean isSlim) {
 		this.width = width;
 		this.height = height;
 		this.depth = depth;
 		this.isSlim = isSlim;
-		setMesh(model = new Model(width, height, depth, scaleX, scaleY, startX, startY, isSlim));
+		setMesh(model = new Model(width + enlarge, height + enlarge, depth + enlarge, scaleX, scaleY, startX, startY, isSlim));
 	}
 
 	public void setWidth(double width) {

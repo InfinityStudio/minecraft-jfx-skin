@@ -1,6 +1,7 @@
 package moe.mickey.minecraft.skin.fx;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javafx.event.ActionEvent;
@@ -10,6 +11,11 @@ public class SkinAnimation {
 	
 	protected int weight, left;
 	protected List<SkinTransition> transitions;
+	
+	@Deprecated
+	public SkinAnimation() {
+		this.transitions = new LinkedList<>();
+	}
 	
 	public SkinAnimation(int weight, SkinTransition... transitions) {
 		this.weight = weight;

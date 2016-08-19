@@ -10,8 +10,14 @@ import javafx.util.Duration;
 
 public class SkinTransition extends Transition {
 	
-	private Function<Double, Double> expression;
-	private List<WritableValue<Number>> observables;
+	protected Function<Double, Double> expression;
+	protected List<WritableValue<Number>> observables;
+	protected boolean fix;
+	protected int count;
+	
+	public int getCount() {
+		return count;
+	}
 	
 	public SkinTransition(Duration duration, Function<Double, Double> expression, WritableValue<Number>... observables) {
 		setCycleDuration(duration);
@@ -21,8 +27,16 @@ public class SkinTransition extends Transition {
 
 	@Override
 	protected void interpolate(double frac) {
+		if (frac == 0 || frac == 1)
+			count++;
 		double val = expression.apply(frac);
 		observables.forEach(w -> w.setValue(val));
+	}
+	
+	@Override
+	public void play() {
+		count = 0;
+		super.play();
 	}
 	
 }

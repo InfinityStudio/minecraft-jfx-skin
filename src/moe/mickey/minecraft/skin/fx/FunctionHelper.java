@@ -11,15 +11,15 @@ import javafx.event.EventHandler;
 
 public interface FunctionHelper {
 	
-	public static <T> void alway(Consumer<T> consumer, T... ts) {
+	public static <T> void always(Consumer<T> consumer, T... ts) {
 		Arrays.asList(ts).forEach(consumer);
 	}
 	
-	public static <A, B> void alwayA(BiConsumer<A, B> consumer, A a, B... bs) {
+	public static <A, B> void alwaysA(BiConsumer<A, B> consumer, A a, B... bs) {
 		Arrays.asList(bs).forEach(b -> consumer.accept(a, b));
 	}
 	
-	public static <A, B> void alwayB(BiConsumer<A, B> consumer, B b, A... as) {
+	public static <A, B> void alwaysB(BiConsumer<A, B> consumer, B b, A... as) {
 		Arrays.asList(as).forEach(a -> consumer.accept(a, b));
 	}
 	
@@ -56,5 +56,5 @@ public interface FunctionHelper {
 	public static <A, B> Supplier<B> link1(Supplier<A> supplier, Function<A, B> function) {
 		return () -> function.apply(supplier.get());
 	}
-
+	
 }

@@ -1,7 +1,5 @@
 package moe.mickey.minecraft.skin.fx;
 
-import static moe.mickey.minecraft.skin.fx.FunctionHelper.*;
-
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -22,7 +20,6 @@ import javafx.scene.shape.Shape3D;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
-import javafx.util.Duration;
 
 public class SkinCanvas extends Group {
 	
@@ -30,11 +27,11 @@ public class SkinCanvas extends Group {
 	public static final Image STEVE = new Image(SkinCanvas.class.getResourceAsStream("/steve.png"));
 	public static final Image CHOCOLATE = new Image(SkinCanvas.class.getResourceAsStream("/chocolate.png"));
 	
-	public static final SkinCube ALEX_LARM = new SkinCube(3, 12, 4, 14F / 64F, 16F / 64F, 32F / 64F, 48F / 64F, true);
-	public static final SkinCube ALEX_RARM = new SkinCube(3, 12, 4, 14F / 64F, 16F / 64F, 40F / 64F, 16F / 64F, true);
+	public static final SkinCube ALEX_LARM = new SkinCube(3, 12, 4, 14F / 64F, 16F / 64F, 32F / 64F, 48F / 64F, 0F, true);
+	public static final SkinCube ALEX_RARM = new SkinCube(3, 12, 4, 14F / 64F, 16F / 64F, 40F / 64F, 16F / 64F, 0F, true);
 	
-	public static final SkinCube STEVEN_LARM = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 32F / 64F, 48F / 64F, false);
-	public static final SkinCube STEVEN_RARM = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 40F / 64F, 16F / 64F, false);
+	public static final SkinCube STEVEN_LARM = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 32F / 64F, 48F / 64F, 0F, false);
+	public static final SkinCube STEVEN_RARM = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 40F / 64F, 16F / 64F, 0F, false);
 	
 	protected Image srcSkin, skin;
 	protected boolean isSlim;
@@ -52,12 +49,12 @@ public class SkinCanvas extends Group {
 	public final SkinMultipleCubes llegOuter = new SkinMultipleCubes(4, 12, 4, 0F / 64F, 48F / 64F, 1.0625, 0.2);
 	public final SkinMultipleCubes rlegOuter = new SkinMultipleCubes(4, 12, 4, 0F / 64F, 32F / 64F, 1.0625, 0.2);
 	
-	public final SkinCube headInside = new SkinCube(8, 8,  8, 32F / 64F, 16F / 64F, 0F, 0F, false);
-	public final SkinCube bodyInside = new SkinCube(8, 12, 4, 24F / 64F, 16F / 64F, 16F / 64F, 16F / 64F, false);
-	public final SkinCube larmInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 32F / 64F, 48F / 64F, false);
-	public final SkinCube rarmInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 40F / 64F, 16F / 64F, false);
-	public final SkinCube llegInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 16F / 64F, 48F / 64F, false);
-	public final SkinCube rlegInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 0F, 16F / 64F, false);
+	public final SkinCube headInside = new SkinCube(8, 8,  8, 32F / 64F, 16F / 64F, 0F, 0F, 0F, false);
+	public final SkinCube bodyInside = new SkinCube(8, 12, 4, 24F / 64F, 16F / 64F, 16F / 64F, 16F / 64F, 0.03F, false);
+	public final SkinCube larmInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 32F / 64F, 48F / 64F, 0F, false);
+	public final SkinCube rarmInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 40F / 64F, 16F / 64F, 0F, false);
+	public final SkinCube llegInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 16F / 64F, 48F / 64F, 0F, false);
+	public final SkinCube rlegInside = new SkinCube(4, 12, 4, 16F / 64F, 16F / 64F, 0F, 16F / 64F, 0F, false);
 	
 	public final SkinGroup head = new SkinGroup(
 			new Rotate(0, 0, headInside.getHeight() / 2, 0, Rotate.X_AXIS), 
@@ -112,20 +109,8 @@ public class SkinCanvas extends Group {
 		return animationplayer;
 	}
 	
-	// Test Animation
-	{
-		SkinTransition larmTransition = new SkinTransition(Duration.seconds(2), v -> v * 7.5,
-				larm.getZRotate().angleProperty());
-		larmTransition.setAutoReverse(true);
-		larmTransition.setCycleCount(2);
-		
-		SkinTransition rarmTransition = new SkinTransition(Duration.seconds(2), v -> v * -7.5,
-				rarm.getZRotate().angleProperty());
-		rarmTransition.setAutoReverse(true);
-		rarmTransition.setCycleCount(2);
-		
-		SkinAnimation animation = new SkinAnimation(1000, larmTransition, rarmTransition);
-		getAnimationplayer().addSkinAnimation(animation);
+	public Image getSrcSkin() {
+		return srcSkin;
 	}
 	
 	public Image getSkin() {
@@ -147,11 +132,11 @@ public class SkinCanvas extends Group {
 	
 	protected void updateSkinModel(boolean isSlim) {
 		this.isSlim = isSlim;
-		alwayB(SkinMultipleCubes::setWidth, isSlim ? 3 : 4, larmOuter, rarmOuter);
-		alwayB(SkinCube::setWidth, isSlim ? 3D : 4D, larmInside, rarmInside);
+		FunctionHelper.alwaysB(SkinMultipleCubes::setWidth, isSlim ? 3 : 4, larmOuter, rarmOuter);
+		FunctionHelper.alwaysB(SkinCube::setWidth, isSlim ? 3D : 4D, larmInside, rarmInside);
 		
-		alwayB(Node::setTranslateX, -(bodyInside.getWidth() + larmInside.getWidth()) / 2, larmOuter, larm);
-		alwayB(Node::setTranslateX, +(bodyInside.getWidth() + rarmInside.getWidth()) / 2, rarmOuter, rarm);
+		FunctionHelper.alwaysB(Node::setTranslateX, -(bodyInside.getWidth() + larmInside.getWidth()) / 2, larm);
+		FunctionHelper.alwaysB(Node::setTranslateX, +(bodyInside.getWidth() + rarmInside.getWidth()) / 2, rarm);
 		if (isSlim) {
 			larmInside.setModel(ALEX_LARM.getModel());
 			rarmInside.setModel(ALEX_RARM.getModel());
