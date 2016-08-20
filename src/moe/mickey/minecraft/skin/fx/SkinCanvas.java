@@ -1,18 +1,11 @@
 package moe.mickey.minecraft.skin.fx;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.image.Image;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
@@ -36,7 +29,7 @@ public class SkinCanvas extends Group {
 	protected Image srcSkin, skin;
 	protected boolean isSlim;
 	
-	protected double preW, preH, sensitivity;
+	protected double preW, preH;
 	protected boolean msaa;
 	
 	protected SubScene subScene;
@@ -103,8 +96,6 @@ public class SkinCanvas extends Group {
 	
 	protected SkinAnimationPlayer animationplayer = new SkinAnimationPlayer();
 	
-	private double lastX = -1, lastY = -1;
-	
 	public SkinAnimationPlayer getAnimationplayer() {
 		return animationplayer;
 	}
@@ -149,24 +140,15 @@ public class SkinCanvas extends Group {
 		rarm.getZRotate().setPivotX(+rarmInside.getWidth() / 2);
 	}
 	
-	public double getSensitivity() {
-		return sensitivity;
-	}
-	
-	public void setSensitivity(double sensitivity) {
-		this.sensitivity = sensitivity;
-	}
-	
 	public SkinCanvas(double preW, double preH) {
-		this(STEVE, preW, preH, true, .5);
+		this(STEVE, preW, preH, true);
 	}
 	
-	public SkinCanvas(Image skin, double preW, double preH, boolean msaa, double sensitivity) {
+	public SkinCanvas(Image skin, double preW, double preH, boolean msaa) {
 		this.skin = skin;
 		this.preW = preW;
 		this.preH = preH;
 		this.msaa = msaa;
-		this.sensitivity = sensitivity;
 		
 		init();
 	}
@@ -234,59 +216,6 @@ public class SkinCanvas extends Group {
 	
 	protected void init() {
 		getChildren().add(createSubScene());
-		
-		addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-			lastX = -1;
-			lastY = -1;
-		});
-		addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> {
-			if (!(lastX == -1 || lastY == -1)) {
-				if (e.isAltDown() || e.isControlDown() || e.isShiftDown()) {
-					if (e.isShiftDown())
-						zRotate.setAngle(zRotate.getAngle() - (e.getSceneY() - lastY) * sensitivity);
-					if (e.isAltDown())
-						yRotate.setAngle(yRotate.getAngle() + (e.getSceneX() - lastX) * sensitivity);
-					if (e.isControlDown())
-						xRotate.setAngle(xRotate.getAngle() + (e.getSceneY() - lastY) * sensitivity);
-				} else {
-					double yaw = yRotate.getAngle() + (e.getSceneX() - lastX) * sensitivity;
-					yaw %= 360;
-					if (yaw < 0)
-						yaw += 360;
-					
-					int flagX = yaw < 90 || yaw > 270 ? 1 : -1;
-					int flagZ = yaw < 180 ? -1 : 1;
-					double kx = Math.abs(90 - yaw % 180) / 90 * flagX, kz = Math.abs(90 - (yaw + 90) % 180) / 90 * flagZ;
-					
-					xRotate.setAngle(xRotate.getAngle() + (e.getSceneY() - lastY) * sensitivity * kx);
-					yRotate.setAngle(yaw);
-					zRotate.setAngle(zRotate.getAngle() + (e.getSceneY() - lastY) * sensitivity * kz);
-				}
-			}
-			lastX = e.getSceneX();
-			lastY = e.getSceneY();
-		});
-		addEventHandler(ScrollEvent.SCROLL, e -> {
-			double delta = (e.getDeltaY() > 0 ? 1 : e.getDeltaY() == 0 ? 0 : -1) / 10D * sensitivity;
-			scale.setX(Math.min(Math.max(scale.getX() - delta, 0.1), 10));
-			scale.setY(Math.min(Math.max(scale.getY() - delta, 0.1), 10));
-		});
-		addEventHandler(DragEvent.DRAG_OVER, e -> {
-			if (e.getDragboard().hasFiles()) {
-                File file = e.getDragboard().getFiles().get(0);
-                if (file.getAbsolutePath().endsWith(".png"))
-                	e.acceptTransferModes(TransferMode.COPY);
-            }
-		});
-		addEventHandler(DragEvent.DRAG_DROPPED, e -> {
-			if (e.isAccepted())
-				try {
-					File skin = e.getDragboard().getFiles().get(0);
-					updateSkin(new Image(new FileInputStream(skin)), skin.getName().contains("3"));
-				} catch (Exception ex) {
-					// Ignore
-				}
-		});
 	}
 
 }
